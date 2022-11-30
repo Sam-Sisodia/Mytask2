@@ -1,0 +1,482 @@
+
+from django.db import models
+from django.contrib.auth.models import AbstractUser
+
+# Create your models here.
+
+
+
+gender = (
+    ('MALE','MALE'),
+    ('FEMALE', 'FEMALE')
+)
+
+usertype = (
+    ('Administrator','Administrator'),
+    ('AssistantTeacher','Assistant Teacher'),
+    ('Regular Teacher','Regular Teacher'),
+    ('Student','Student')
+
+)
+
+class School(models.Model):
+    SchoolName = models.CharField(max_length=240)
+    City       =models.CharField(max_length=240)
+    State      =models.CharField(max_length=240)
+
+    def __str__(self):
+        return self.SchoolName
+
+class Class(models.Model):
+    ClassName= models.CharField(max_length=240)
+    school = models.ForeignKey(School, related_name='School_class',on_delete=models.CASCADE,null=True,blank=True )
+    
+    class Meta:
+        unique_together = (("ClassName", "school"),)
+
+
+class User(AbstractUser):
+    Address      = models.CharField(max_length=240)
+    Gender         =  models.CharField(max_length=10 , choices= gender)
+    PhoneNumber = models.IntegerField(null=True,blank=True)
+    DateofBirth = models.DateField(null=True, blank=True)
+    usertype = models.CharField(max_length=100 , choices= usertype)
+    
+
+class Teacher(models.Model):
+    #student = models.ForeignKey(Student, related_name='Teacher_Student',on_delete=models.CASCADE ,null=True,blank=True)
+    School = models.ForeignKey(School, related_name='Teacher_school',on_delete=models.CASCADE ,null=True,blank=True)
+    user = models.OneToOneField(User, related_name='User_Teacher',on_delete=models.CASCADE ,null=True,blank=True)
+    class Meta:
+        unique_together = (("School", "user")) 
+
+
+
+class  Student(models.Model):
+    user = models.OneToOneField(User, related_name='User_school',on_delete=models.CASCADE ,null=True,blank=True)
+    School = models.ForeignKey(School, related_name='School_Student',on_delete=models.CASCADE ,null=True,blank=True)
+    studentclass = models.ForeignKey(Class, related_name='Student_class',on_delete=models.CASCADE,null=True,blank=True)
+    stuteacher = models.ForeignKey(Teacher, related_name='Student_Teacher',on_delete=models.CASCADE,null=True,blank=True)
+
+    class Meta:
+        unique_together = (("studentclass", "user","School",'stuteacher'),) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+============================================================================================================================
+
+
+
+
+
+
+
+
+
+
+from django.db import models
+from django.contrib.auth.models import AbstractUser
+
+# Create your models here.
+
+
+
+gender = (
+    ('MALE','MALE'),
+    ('FEMALE', 'FEMALE')
+)
+
+usertype = (
+    ('Administrator','Administrator'),
+    ('AssistantTeacher','Assistant Teacher'),
+    ('Regular Teacher','Regular Teacher'),
+    ('Student','Student')
+
+)
+
+class School(models.Model):
+    SchoolName = models.CharField(max_length=240)
+    City       =models.CharField(max_length=240)
+    State      =models.CharField(max_length=240)
+
+
+    def __str__(self):
+        return self.SchoolName
+
+class Class(models.Model):
+    ClassName= models.CharField(max_length=240)
+    scholl = models.ForeignKey(School, related_name='School_class',on_delete=models.CASCADE,null=True,blank=True )
+
+
+
+class User(AbstractUser):
+    Address      = models.CharField(max_length=240)
+    Gender         =  models.CharField(max_length=10 , choices= gender)
+    PhoneNumber = models.IntegerField(null=True,blank=True)
+    DateofBirth = models.DateField(null=True, blank=True)
+    scholl = models.ForeignKey(School, related_name='user_scholl',on_delete=models.CASCADE,null=True,blank=True )
+    usertype = models.CharField(max_length=100 , choices= usertype)
+    
+class Teacher(models.Model):
+    School = models.ForeignKey(School, related_name='Teacher_school',on_delete=models.CASCADE ,null=True,blank=True)
+    user = models.ForeignKey(User, related_name='User_Teacher',on_delete=models.CASCADE ,null=True,blank=True)
+
+    class Meta:
+        unique_together = (("School", "user"),) 
+
+
+class  Student(models.Model):
+    user = models.ForeignKey(User, related_name='User_school',on_delete=models.CASCADE ,null=True,blank=True)
+    studentclass = models.ForeignKey(Class, related_name='Student_class',on_delete=models.CASCADE,null=True,blank=True)
+     
+    class Meta:
+        unique_together = (("studentclass", "user"),) 
+
+
+
+
+
+
+    
+
+
+
+    
+
+
+    
+
+
+
+
+---------------------------------------------------------------------------------------------
+
+
+from django.db import models
+from django.contrib.auth.models import AbstractUser
+
+Create your models here.
+
+
+
+gender = (
+    ('MALE','MALE'),
+    ('FEMALE', 'FEMALE')
+)
+
+
+usertype = (
+    ('Administrator','Administrator'),
+    ('Assistant Teacher','Assistant Teacher'),
+    ('Regular Teacher','Regular Teacher'),
+    ('Student','Student')
+
+)
+
+
+
+class User(AbstractUser):
+    usertype = models.CharField(max_length=100 , choices= usertype)
+    PhoneNumber = models.IntegerField()
+    DateofBirth = models.DateField(null=True, blank=True)
+    studentclass = models.ForeignKey(Class, related_name='Student_class',on_delete=models.CASCADE,null=True, blank=True )
+
+class School(models.Model):
+    SchoolName = models.CharField(max_length=240)
+    City       =models.CharField(max_length=240)
+    State      =models.CharField(max_length=240)
+    
+   
+
+    def __str__(self):
+        return self.SchoolName
+
+
+
+class Class(models.Model):
+    ClassName= models.CharField(max_length=240)
+    scholl = models.ForeignKey(School, related_name='School_class',on_delete=models.CASCADE )
+
+    class Meta:
+        unique_together = (("ClassName", "scholl"),) 
+
+
+    def __str__(self):
+        return self.ClassName
+
+
+
+class  Student(models.Model):
+    FirstName = models.CharField(max_length=50)
+    LastName = models.CharField(max_length=240)
+    PhoneNumber = models.IntegerField()
+    DateofBirth = models.DateField(null=True, blank=True)
+    Username = models.CharField(max_length=24)
+    Address      = models.CharField(max_length=240)
+    Gender         =  models.CharField(max_length=10 , choices= gender)
+    Password       = models.CharField(max_length=24)
+
+    studentclass = models.ForeignKey(Class, related_name='Student_class',on_delete=models.CASCADE )
+    
+    class Meta:
+        unique_together = (("FirstName", "studentclass"),) 
+
+    def __str__(self):
+        return self.FirstName
+
+    
+
+
+
+
+
+
+class Teacher(models.Model):
+    FirstName = models.CharField(max_length=240)
+    LastName = models.CharField(max_length=240)
+    Username = models.CharField(max_length=24)
+    Email     = models.EmailField()
+    PhoneNumber = models.IntegerField()
+    Address      = models.CharField(max_length=240)
+    Gender         =  models.CharField(max_length=10 , choices= gender)
+    Password       = models.CharField(max_length=24)
+    School = models.ForeignKey(School, related_name='Teacher_school',on_delete=models.CASCADE )
+    Student = models.ManyToManyField(Student, related_name='Teacher_student',)
+
+    class Meta:
+        unique_together = (("FirstName", "School"),) 
+    
+
+    def __str__(self):
+        return self.FirstName
+
+
+    
+
+
+
+
+----------------------------------------------------------------------------------
+from django.db import models
+from django.contrib.auth.models import AbstractUser
+
+# Create your models here.
+
+
+
+gender = (
+    ('MALE','MALE'),
+    ('FEMALE', 'FEMALE')
+)
+
+usertype = (
+    ('Administrator','Administrator'),
+    ('AssistantTeacher','Assistant Teacher'),
+    ('Regular Teacher','Regular Teacher'),
+    ('Student','Student')
+
+)
+
+class School(models.Model):
+    SchoolName = models.CharField(max_length=240)
+    City       =models.CharField(max_length=240)
+    State      =models.CharField(max_length=240)
+
+
+    def __str__(self):
+        return self.SchoolName
+
+class Class(models.Model):
+    ClassName= models.CharField(max_length=240)
+    scholl = models.ForeignKey(School, related_name='School_class',on_delete=models.CASCADE,null=True,blank=True )
+
+
+
+class User(AbstractUser):
+    Address      = models.CharField(max_length=240)
+    Gender         =  models.CharField(max_length=10 , choices= gender)
+    PhoneNumber = models.IntegerField(null=True,blank=True)
+    DateofBirth = models.DateField(null=True, blank=True)
+    usertype = models.CharField(max_length=100 , choices= usertype)
+    
+
+
+
+class  Student(models.Model):
+    user = models.ForeignKey(User, related_name='User_school',on_delete=models.CASCADE ,null=True,blank=True)
+    School = models.ForeignKey(User, related_name='School_Student',on_delete=models.CASCADE ,null=True,blank=True)
+    studentclass = models.ForeignKey(Class, related_name='Student_class',on_delete=models.CASCADE,null=True,blank=True)
+    class Meta:
+        unique_together = (("studentclass", "user"),) 
+
+
+class Teacher(models.Model):
+    student = models.ForeignKey(Student, related_name='Teacher_Student',on_delete=models.CASCADE ,null=True,blank=True)
+    School = models.ForeignKey(School, related_name='Teacher_school',on_delete=models.CASCADE ,null=True,blank=True)
+    user = models.ForeignKey(User, related_name='User_Teacher',on_delete=models.CASCADE ,null=True,blank=True)
+    class Meta:
+        unique_together = (("School", "user"),) 
+
+
+    
+
+
+
+    
+
+
+    
+
+
+
+
+
+
+
+
+
+
+===================================================================================================
+
+####Serializer00000
+
+
+
+from distutils.log import info
+from venv import create
+from rest_framework import serializers,validators
+from . models import *
+from dataclasses import field, fields
+from django.contrib.auth.hashers import make_password
+
+
+class Registerserilizer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["username","first_name","last_name","email","password","usertype",'Address','Gender',
+                      'PhoneNumber','DateofBirth' ]
+
+    def create(self, validated_data):
+        user = User.objects.create(
+            username=validated_data['username'],
+            first_name = validated_data['first_name'],
+            last_name= validated_data['last_name'],
+            email = validated_data['email'],
+            Address = validated_data['Address'],
+            Gender = validated_data['Gender'],
+            DateofBirth = validated_data['DateofBirth'],
+            PhoneNumber = validated_data['PhoneNumber'],
+            password = make_password(validated_data['password']),
+            usertype = validated_data['usertype']
+            )
+    
+        user.save()
+        return user
+
+class LogSerializer(serializers.Serializer):
+   username = serializers.CharField(max_length=40)
+   password =serializers.CharField(max_length=40)
+
+
+
+
+
+class Studentserilizer(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = "__all__"
+
+
+
+
+
+class classSerilizer(serializers.ModelSerializer):
+    class Meta:
+        model = Class
+        fields =['id','ClassName','school']
+
+    # def validate_details(self,ClassName,scholl ):
+    #     print("helloo -----",ClassName)
+
+    #     if Class.objects.filter(ClassName=ClassName,scholl=scholl).exists():
+
+    #         raise serializers.ValidationError("Not valid")
+    #     else:
+    #         pass
+
+
+
+
+
+class TeacherSerilizer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Teacher
+        fields = ['School','user']
+
+
+class Schoolserilizer(serializers.ModelSerializer):
+    School_class = classSerilizer(many=True,read_only=True)
+
+    Teacher_school  = TeacherSerilizer(many=True,read_only=True)
+
+   
+    School_Student  = Studentserilizer(many=True,read_only=True)
+
+   
+    
+
+    class Meta:
+        model = School
+        fields =['SchoolName','City','State','School_class','Teacher_school','School_Student']
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
